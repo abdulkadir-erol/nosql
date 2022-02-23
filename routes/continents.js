@@ -1,64 +1,55 @@
 const express = require('express');
-router = express.Router();
+const router = express.Router()
 
 const ContinentModel = require('../models/Continent');
+const CountryModel = require('../models/Country');
 
 router.get('/', async(request, response) => {
-    const continents = await ContinentModel.find();
+    const continents = await ContinentModel.find().populate('countries');
     response.status(200).json(continents);
 });
 
-router.get('/:id', async(request, response) => {
-    const continentID = request.params.id;
-    const continents = await ContinentModel.find({
-        _id: continentID
+router.get('/threeCountry', async(request, response) => {
+    const continents = await ContinentModel.find().populate({
+        path: 'countries',
+        options: { limit: 3 }
     });
-
+    //console.log(continents);
     response.status(200).json(continents);
-})
-
-router.get('/length', async(request, response) => {
-    const continents = await ContinentModel.find();
-    console.log(continents.length)
-    response.status(200).json(continents.length);
 });
 
+router.post('/', async(request, response) => {
+    const { name } = request.body
 
-router.post('/', async(req, res) => {
-    //console.log(req.body)
-    const { name, isoCode } = req.body;
-
-    // do not create with req.body
-    const continents = await ContinentModel.create({
-        name: name,
+    const continent = await ContinentModel.create({
+        name: name
     });
 
-    res.status(200).json(continents);
+    response.status(200).json(continent);
 });
 
-
-router.delete('/:id', async(request, response) => {
+router.get('/:id/fourthCountry', async(request, response) => {
     const continentID = request.params.id;
 
-    await ContinentModel.findOneAndDelete({
-        _id: continentID
-    });
-
-    response.status(200).json({ msg: "Continent deleted!" });
-})
-
+    const fourth = await CountryModel.find({
+        continent: continentID
+    }).sort('name');
+    console.log(fourth);
+    response.status(200).json(fourth[3]);
+});
 
 router.put('/:id', async(request, response) => {
     const continentID = request.params.id;
-    const { name, isoCode } = request.body;
-    const continent = await ContinentModel.findByIdAndUpdate({
+    const { countries } = request.body
+
+    const continent = await ContinentModel.findOneAndUpdate({
         _id: continentID
     }, {
-        name,
-        isoCode
+        countries
     }, {
         new: true
     });
+
     response.status(200).json(continent);
 });
 

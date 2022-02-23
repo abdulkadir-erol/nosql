@@ -8,7 +8,7 @@ const ContinentModel = mongoose.model('Continent', {
         //should be unique
         unique: true
     },
-    contries: [{
+    countries: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Country'
     }]
