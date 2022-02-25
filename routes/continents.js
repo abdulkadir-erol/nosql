@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router()
+const router = express.Router();
 
 const ContinentModel = require('../models/Continent');
 const CountryModel = require('../models/Country');
@@ -12,7 +12,9 @@ router.get('/', async(request, response) => {
 router.get('/threeCountry', async(request, response) => {
     const continents = await ContinentModel.find().populate({
         path: 'countries',
-        options: { limit: 3 }
+        options: {
+            perDocumentLimit: 3
+        }
     });
     //console.log(continents);
     response.status(200).json(continents);
@@ -28,14 +30,19 @@ router.post('/', async(request, response) => {
     response.status(200).json(continent);
 });
 
-router.get('/:id/fourthCountry', async(request, response) => {
-    const continentID = request.params.id;
 
-    const fourth = await CountryModel.find({
-        continent: continentID
-    }).sort('name');
-    console.log(fourth);
-    response.status(200).json(fourth[3]);
+router.get('/firstFour', async(request, response) => {
+
+    const fourth = await ContinentModel.find().populate({
+        path: 'countries',
+        options: {
+            sort: {
+                name: 1
+            },
+            perDocumentLimit: 4
+        }
+    });
+    response.status(200).json(fourth);
 });
 
 router.put('/:id', async(request, response) => {

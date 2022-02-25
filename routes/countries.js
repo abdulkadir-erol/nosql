@@ -29,9 +29,9 @@ router.get('/hasUandGT1', async(request, response) => {
 
 router.get('/Input/:string', async(request, response) => {
     const string = request.params.string;
-    const hasU = await CountryModel.find({ 'name': { '$regex': string, '$options': 'i' } });
-    console.log(hasU);
-    response.status(200).json(hasU);
+    const hasString = await CountryModel.find({ 'name': { '$regex': string, '$options': 'i' } });
+    console.log(hasString);
+    response.status(200).json(hasString);
 });
 
 router.get('/:id', async(request, response) => {
